@@ -1,0 +1,37 @@
+﻿@page "/Notes"
+@inject HttpClient http
+@inject NavigationManager _NavigationManager
+@using Data
+
+<h3>Notes</h3>
+
+@foreach (var note in notes){
+    <SfCard>
+        <CardHeader Title="@note.DateCreated.ToString("dd/MM/yyyy")"></CardHeader>
+        <CardContent Content="@note.Text"></CardContent>
+        <CardFooter>
+            <CardFooterContent>
+                @if(note.Contact is not null){
+                    <SfButton Content=@($"Show {note.Contact.NickName}")
+                    IsPrimary="true"
+                    OnClick="(() => NavigateToContact(note.Contact.Id))"></SfButton>
+
+                }
+            </CardFooterContent>
+        </CardFooter>
+    </SfCard>
+}
+
+@code {
+    public List<Note> notes = new List<Note>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        notes = await http.GetFromJsonAsync<List<Note>>("api/Note");
+    }
+
+    void NavigateToContact(int contactId){
+        _NavigationManager.NavigateTo($"/contacts/edit/{contactId}");
+    }
+}
+

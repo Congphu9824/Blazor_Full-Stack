@@ -1,0 +1,148 @@
+﻿@page "/contacts/edit/{id:int?}"
+@page "/contacts/new"
+
+@using Data
+@inject HttpClient http
+@inject NavigationManager _NavigationManager
+
+<h3>Edit Contact</h3>
+
+@if (Id != null)
+{
+	<h3>Edit: @contact.NickName</h3>
+}
+else{
+	<h3>Create a new contact</h3>
+}
+
+<div style="width: 50%; margin: auto;">
+	<EditForm Model="contact" OnValidSubmit="handleSubmit">
+		<DataAnnotationsValidator/>
+		<SfTextBox CssClass="e-outline" Placeholder="First Name"
+		FloatLabelType="@FloatLabelType.Auto" @bind-Value="contact.FirstName" />
+		<SfTextBox CssClass="e-outline" Placeholder="Last Name"
+		FloatLabelType="@FloatLabelType.Auto" @bind-Value="contact.LastName" />
+		<SfTextBox CssClass="e-outline" Placeholder="Nick Name"
+		FloatLabelType="@FloatLabelType.Auto" @bind-Value="contact.NickName" />
+		<ValidationMessage For="(() => contact.NickName)" />
+		<SfTextBox CssClass="e-outline" Placeholder="Place"
+		FloatLabelType="@FloatLabelType.Auto" @bind-Value="contact.Place" />
+		<SfDatePicker TValue="DateTime?" Placeholder="Date of Birth"
+		FloatLabelType="@FloatLabelType.Auto" @bind-Value="contact.DateOfBirth"
+		Format="MM/dd/yyyy" />
+		<hr />
+		<SfButton CssClass="e-primary" IconCss="e-icons e-save" Content="Save" type="submit" />
+		<SfButton CssClass="e-danger" Content="Cancel" OnClick="Cancel"></SfButton>
+
+	</EditForm>
+	<p>
+		<SfMessage Severity="MessageSeverity.Success" Visible="ShowSuccessMessage">Contact saved successfully</SfMessage>
+		<SfMessage Severity="MessageSeverity.Error" Visible="ShowErrorMessage">something went wrong</SfMessage>
+	</p>
+</div>
+
+<div class="" style="width: 50%; margin: auto;">
+	@if (Id is not null)
+	{
+		<h3>Notes</h3>
+		<SfTextBox CssClass="e-outline" Placeholder="New Note" Multiline="true" FloatLabelType="@FloatLabelType.Auto" @bind-Value="NewNote.Text"></SfTextBox>
+		<SfButton CssClass="e-inherit" Content="Add Note" OnClick="CreateNote"></SfButton>
+		<hr />
+		<p>
+			<SfButton IsPrimary="true" Content="Load All Notes" OnClick="LoadNotes"></SfButton>
+		</p>
+		@foreach (var note in notes)
+		{
+			<SfCard>
+				<CardHeader Title="@note.DateCreated.ToString()"></CardHeader>
+				<CardContent Content="@note.Text"></CardContent>
+				<CardFooter>
+					<CardFooterContent>
+						<SfButton Content="Delete"
+								  IsPrimary="true"
+								  OnClick="@(() => DeleteNote(note.Id))"></SfButton>
+					</CardFooterContent>
+				</CardFooter>
+			</SfCard>
+			<br />
+		}
+	}
+
+</div>
+@code {
+	[Parameter]
+	public int? Id { get; set; }
+
+	public Contact contact = new Contact();
+	public List<Note> notes { get; set; } = new List<Note>();
+	public Note NewNote { get; set; } = new Note { Text = String.Empty };
+
+
+	bool ShowSuccessMessage = false;
+	bool ShowErrorMessage = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await http.GetAsync($"api/Contact/{Id}");
+		if(response.IsSuccessStatusCode){
+			var jsonresult = await response.Content.ReadFromJsonAsync<Contact>();
+			if(jsonresult is not null){
+				contact = jsonresult;
+			}
+			else{
+				_NavigationManager.NavigateTo("/contacts/new");
+			}
+		}
+	}
+
+	public async Task handleSubmit()
+	{
+		HttpResponseMessage response;
+		if (Id.HasValue)
+		{
+			response = await http.PutAsJsonAsync($"api/Contact/{contact.Id}", contact);
+		}
+		else
+		{
+			response = await http.PostAsJsonAsync($"api/Contact", contact);
+		}
+		if (response.IsSuccessStatusCode)
+		{
+			var jsonResult = await response.Content.ReadFromJsonAsync<Contact>();
+			_NavigationManager.NavigateTo("/contacts");
+			ShowSuccessMessage = true;
+		}
+		else{
+			ShowErrorMessage = true;
+		}
+	}
+
+	async Task CreateNote()
+	{
+		if (Id is null) return;
+
+		NewNote.ContactId = Id;
+		var result = await http.PostAsJsonAsync("api/Note", NewNote);
+		if(result.IsSuccessStatusCode){
+			await LoadNotes();
+		}
+	}
+
+	async Task LoadNotes(){
+		var response = await http.GetFromJsonAsync<List<Note>>($"api/Note/{contact.Id}");
+		if (response is not null) 
+			notes = response;
+	}
+
+	async Task DeleteNote(int NoteId){
+		
+		var result = await http.DeleteFromJsonAsync<List<Note>>($"api/Note/{NoteId}");
+		if (result is not null)
+			notes = result;
+	}
+
+	public void Cancel()
+	{
+		_NavigationManager.NavigateTo("/contacts"); 
+	}
+}

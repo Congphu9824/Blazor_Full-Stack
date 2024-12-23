@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor_Full-Stack", "Blazor_Full-Stack\Blazor_Full-Stack.csproj", "{B628438A-0707-4F9C-904E-814A1FCBCD30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{4EBC8A72-DA63-4568-A0C0-59DF86452A46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{B0539438-9A03-46DF-96B2-BB70A68D6E39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{B628438A-0707-4F9C-904E-814A1FCBCD30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B628438A-0707-4F9C-904E-814A1FCBCD30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B628438A-0707-4F9C-904E-814A1FCBCD30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EBC8A72-DA63-4568-A0C0-59DF86452A46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EBC8A72-DA63-4568-A0C0-59DF86452A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EBC8A72-DA63-4568-A0C0-59DF86452A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EBC8A72-DA63-4568-A0C0-59DF86452A46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0539438-9A03-46DF-96B2-BB70A68D6E39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0539438-9A03-46DF-96B2-BB70A68D6E39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0539438-9A03-46DF-96B2-BB70A68D6E39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0539438-9A03-46DF-96B2-BB70A68D6E39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
